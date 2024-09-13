@@ -3,84 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>אפליקציית כושר מאובטחת</title>
+    <title>הדגמת אפליקציית כושר</title>
     <style>
-        /* הסגנונות נשארים אותו דבר */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #4CAF50;
+        }
+        .section {
+            background-color: #222;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <!-- התוכן HTML נשאר אותו דבר -->
+    <div class="container">
+        <h1>הדגמת אפליקציית כושר</h1>
+        
+        <div class="section">
+            <h2>פרופיל אישי</h2>
+            <p>כאן יהיה טופס למילוי פרטים אישיים וחישוב קלוריות.</p>
+        </div>
 
-    <script>
-        // פונקציה להגנה מפני XSS
-        function escapeHtml(unsafe) {
-            return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
-        }
+        <div class="section">
+            <h2>יומן אכילה</h2>
+            <p>כאן תוכל לתעד את הארוחות היומיות שלך.</p>
+        </div>
 
-        function toggleAllergyDetails() {
-            const allergyDetails = document.getElementById('allergyDetails');
-            allergyDetails.style.display = document.getElementById('hasAllergies').checked ? 'block' : 'none';
-        }
+        <div class="section">
+            <h2>תוכנית תזונה</h2>
+            <p>כאן תוכל למלא שאלון תזונה ולקבל תוכנית מותאמת אישית.</p>
+        </div>
 
-        function generateNutritionPlan() {
-            const dislikedFoods = escapeHtml(document.getElementById('dislikedFoods').value);
-            const hasAllergies = document.getElementById('hasAllergies').checked;
-            const allergies = hasAllergies ? escapeHtml(document.getElementById('allergyList').value) : 'אין אלרגיות';
+        <div class="section">
+            <h2>מתכונים</h2>
+            <h3>אורז מלא עם ירקות</h3>
+            <p><strong>מצרכים:</strong> אורז מלא, גזר, ברוקולי, בצל, שמן זית</p>
+            <p><strong>הוראות הכנה:</strong> לבשל את האורז...</p>
 
-            const planResult = `
-                <h3>תוכנית תזונה מותאמת אישית</h3>
-                <p><strong>מאכלים שאינך אוהב:</strong> ${dislikedFoods || 'לא צוין'}</p>
-                <p><strong>אלרגיות:</strong> ${allergies}</p>
-                <p>תוכנית התזונה תיווצר בהתאם להעדפות ולאלרגיות שציינת.</p>
-            `;
-            document.getElementById('nutritionPlanResult').innerHTML = planResult;
-        }
+            <h3>ביצה מקושקשת</h3>
+            <p><strong>מצרכים:</strong> ביצים, חלב, מלח, פלפל</p>
+            <p><strong>הוראות הכנה:</strong> לערבב את הביצים...</p>
+        </div>
 
-        const recipes = [
-            { name: 'אורז מלא עם ירקות', ingredients: 'אורז מלא, גזר, ברוקולי, בצל, שמן זית', instructions: 'לבשל את האורז...' },
-            { name: 'ביצה מקושקשת', ingredients: 'ביצים, חלב, מלח, פלפל', instructions: 'לערבב את הביצים...' },
-            { name: 'גספצ\'ו', ingredients: 'עגבניות, מלפפונים, פלפל אדום, שום, שמן זית', instructions: 'לטחון את כל הירקות...' },
-            { name: 'דג סלמון צרוב', ingredients: 'פילה סלמון, לימון, שמן זית, מלח, פלפל', instructions: 'לחמם מחבת...' }
-        ];
+        <div class="section">
+            <h2>צ'אט עם יועץ תזונה</h2>
+            <p>כאן תוכל לשוחח עם יועץ תזונה וירטואלי.</p>
+        </div>
 
-        function displayRecipes() {
-            const recipeList = document.getElementById('recipeList');
-            recipeList.innerHTML = '';
-            recipes.forEach(recipe => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <h3>${escapeHtml(recipe.name)}</h3>
-                    <p><strong>מצרכים:</strong> ${escapeHtml(recipe.ingredients)}</p>
-                    <p><strong>הוראות הכנה:</strong> ${escapeHtml(recipe.instructions)}</p>
-                `;
-                recipeList.appendChild(li);
-            });
-        }
+        <div class="section">
+            <h2>מעקב התקדמות</h2>
+            <p>כאן תוכל לעקוב אחר ההתקדמות שלך לאורך זמן.</p>
+        </div>
+    </div>
 
-        function filterRecipes() {
-            const searchTerm = document.getElementById('recipeSearch').value.toLowerCase();
-            const recipeList = document.getElementById('recipeList');
-            recipeList.innerHTML = '';
-            recipes.forEach(recipe => {
-                if (recipe.name.toLowerCase().includes(searchTerm)) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <h3>${escapeHtml(recipe.name)}</h3>
-                        <p><strong>מצרכים:</strong> ${escapeHtml(recipe.ingredients)}</p>
-                        <p><strong>הוראות הכנה:</strong> ${escapeHtml(recipe.instructions)}</p>
-                    `;
-                    recipeList.appendChild(li);
-                }
-            });
-        }
-
-        // הצג את כל המתכונים בטעינת העמוד
-        window.onload = displayRecipes;
-    </script>
+    <footer>
+        <p>הערה: זוהי הדגמה סטטית בלבד. באפליקציה אמיתית, כל הפונקציונליות תהיה אינטראקטיבית ומאובטחת.</p>
+    </footer>
 </body>
 </html>
