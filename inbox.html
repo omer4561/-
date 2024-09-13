@@ -3,74 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הדגמת אפליקציית כושר</title>
+    <title>אפליקציית כושר ותזונה</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #000;
             color: #fff;
+            margin: 0;
+            padding: 20px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
         }
-        h1, h2, h3 {
+        h1, h2 {
             color: #4CAF50;
         }
         .section {
-            background-color: #222;
+            background-color: #1a1a1a;
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #chatBox {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #4CAF50;
+            padding: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>הדגמת אפליקציית כושר</h1>
+        <h1>אפליקציית כושר ותזונה</h1>
         
-        <div class="section">
-            <h2>פרופיל אישי</h2>
-            <p>כאן יהיה טופס למילוי פרטים אישיים וחישוב קלוריות.</p>
+        <div class="section" id="profile">
+            <h2>פרופיל לקוח</h2>
+            <input type="text" id="name" placeholder="שם">
+            <input type="number" id="age" placeholder="גיל">
+            <input type="number" id="weight" placeholder="משקל (ק״ג)">
+            <input type="number" id="height" placeholder="גובה (ס״מ)">
+            <select id="goal">
+                <option value="">בחר מטרה</option>
+                <option value="lose">ירידה במשקל</option>
+                <option value="maintain">שמירה על המשקל</option>
+                <option value="gain">עלייה במשקל</option>
+            </select>
+            <button onclick="calculateCalories()">חשב קלוריות יומיות</button>
+            <p id="caloriesResult"></p>
         </div>
 
-        <div class="section">
+        <div class="section" id="foodDiary">
             <h2>יומן אכילה</h2>
-            <p>כאן תוכל לתעד את הארוחות היומיות שלך.</p>
+            <input type="text" id="food" placeholder="מזון">
+            <input type="number" id="calories" placeholder="קלוריות">
+            <input type="time" id="mealTime">
+            <button onclick="addFoodEntry()">הוסף ארוחה</button>
+            <ul id="foodList"></ul>
         </div>
 
-        <div class="section">
-            <h2>תוכנית תזונה</h2>
-            <p>כאן תוכל למלא שאלון תזונה ולקבל תוכנית מותאמת אישית.</p>
+        <div class="section" id="nutritionPlan">
+            <h2>תכנית תזונה</h2>
+            <button onclick="showNutritionQuestionnaire()">צור תכנית תזונה מותאמת אישית</button>
+            <div id="nutritionQuestionnaire" style="display:none;">
+                <h3>שאלון תזונה</h3>
+                <textarea id="dislikedFoods" placeholder="אילו מאכלים אינך אוהב?"></textarea>
+                <div>
+                    <label>האם יש לך אלרגיות למזון?</label>
+                    <input type="radio" name="allergies" value="yes" onclick="showAllergiesInput()"> כן
+                    <input type="radio" name="allergies" value="no" onclick="hideAllergiesInput()"> לא
+                </div>
+                <textarea id="allergiesDetails" placeholder="פרט את האלרגיות שלך" style="display:none;"></textarea>
+                <button onclick="generateNutritionPlan()">צור תכנית</button>
+            </div>
+            <div id="nutritionPlanResult"></div>
         </div>
 
-        <div class="section">
+        <div class="section" id="recipes">
             <h2>מתכונים</h2>
-            <h3>אורז מלא עם ירקות</h3>
-            <p><strong>מצרכים:</strong> אורז מלא, גזר, ברוקולי, בצל, שמן זית</p>
-            <p><strong>הוראות הכנה:</strong> לבשל את האורז...</p>
-
-            <h3>ביצה מקושקשת</h3>
-            <p><strong>מצרכים:</strong> ביצים, חלב, מלח, פלפל</p>
-            <p><strong>הוראות הכנה:</strong> לערבב את הביצים...</p>
+            <input type="text" id="recipeSearch" placeholder="חפש מתכון">
+            <button onclick="searchRecipes()">חפש</button>
+            <div id="recipeResults"></div>
         </div>
 
-        <div class="section">
-            <h2>צ'אט עם יועץ תזונה</h2>
-            <p>כאן תוכל לשוחח עם יועץ תזונה וירטואלי.</p>
+        <div class="section" id="chat">
+            <h2>צ'אט עם יועץ תזונה AI</h2>
+            <div id="chatBox"></div>
+            <input type="text" id="userMessage" placeholder="הקלד הודעה...">
+            <button onclick="sendMessage()">שלח</button>
         </div>
 
-        <div class="section">
+        <div class="section" id="reminders">
+            <h2>תזכורות</h2>
+            <input type="time" id="waterReminder">
+            <button onclick="setWaterReminder()">הגדר תזכורת שתייה</button>
+            <p id="waterReminderStatus"></p>
+        </div>
+
+        <div class="section" id="progress">
             <h2>מעקב התקדמות</h2>
-            <p>כאן תוכל לעקוב אחר ההתקדמות שלך לאורך זמן.</p>
+            <canvas id="progressChart"></canvas>
+        </div>
+
+        <div class="section" id="workoutPlan">
+            <h2>תכנית אימון</h2>
+            <button onclick="generateWorkoutPlan()">צור תכנית אימון מותאמת אישית</button>
+            <div id="workoutPlanResult"></div>
         </div>
     </div>
 
-    <footer>
-        <p>הערה: זוהי הדגמה סטטית בלבד. באפליקציה אמיתית, כל הפונקציונליות תהיה אינטראקטיבית ומאובטחת.</p>
-    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        let dailyCalories = 0;
+        let foodEntries = [];
+        let waterReminders = [];
+        let weightData = [];
+
+        function calculateCalories() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseInt(document.getElementById('age').value);
+            const goal = document.getElementById('goal').value;
+
+            if (isNaN(weight) || isNaN(height) || isNaN(age)) {
+                alert('אנא הזן נתונים תקינים');
+                return;
+            }
+
+            // Basic BMR calculation (Harris-Benedict equation)
+            let bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+
+            // Adjust for goal
+            switch(goal) {
+                case 'lose':
+                    dailyCalories = bmr * 0.9;
+                    break;
+                case 'maintain':
+                    dailyCalories = bmr;
+                    break;
+                case 'gain':
+                    dailyCalories = bmr * 1.1;
+                    break;
+                default:
+                    dailyCalories = bmr;
+            }
+
+            document.getElementById('caloriesResult').textContent = `הקלוריות היומיות המומלצות: ${Math.round(dailyCalories)} קלוריות`;
+        }
+
+        function addFoodEntry() {
+            const food = document.getElementById('food').value;
+            const calories = parseInt(document.getElementById('calories').value);
+            const time = document.getElementById('mealTime').value;
+
+            if (!food || isNaN(calories)) {
+                alert('אנא הזן נתונים תקינים');
+                return;
+            }
+
+            foodEntries.push({ food, calories, time });
+            updateFoodList();
+        }
+
+        function updateFoodList() {
+            const foodList = document.getElementById('foodList');
+            foodList.innerHTML = '';
+            foodEntries.forEach(entry => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.food} - ${entry.calories} קלוריות - ${entry.time}`;
+                foodList.appendChild(li);
+            });
+        }
+
+        function showNutritionQuestionnaire() {
+            document.getElementById('nutritionQuestionnaire').style.display = 'block';
+        }
+
+        function showAllergiesInput() {
+            document.getElementById('allergiesDetails').style.display = 'block';
+        }
+
+        function hideAllergiesInput() {
+            document.getElementById('allergiesDetails').style.display = 'none';
+        }
+
+        function generateNutritionPlan() {
+            const dislikedFoods = document.getElementById('dislikedFoods').value;
+            const allergies = document.querySelector('input[name="allergies"]:checked').value;
+            const allergiesDetails = document.getElementById('allergiesDetails').value;
+
+            // Here you would typically send this data to a backend service
+            // For demonstration, we'll just display a simple plan
+            const plan = `
+                <h3>תכנית תזונה מותאמת אישית</h3>
+                <h4>ארוחת בוקר</h4>
+                <p>חביתה מ-2 ביצים, פרוסת לחם מחיטה מלאה, ירקות טריים</p>
+                <h4>ארוחת צהריים</h4>
+                <p>חזה עוף צלוי, כוס אורז מלא, סלט ירוק</p>
+                <h4>ארוחת ערב</h4>
+                <p>דג סלמון, תפוח אדמה קטן אפוי, ירקות מאודים</p>
+            `;
+
+            document.getElementById('nutritionPlanResult').innerHTML = plan;
+        }
+
+        function searchRecipes() {
+            const searchTerm = document.getElementById('recipeSearch').value;
+            // Here you would typically send a request to a recipe API
+            // For demonstration, we'll just display a dummy result
+            const results = `
+                <h3>תוצאות חיפוש עבור "${searchTerm}"</h3>
+                <ul>
+                    <li>סלט קינואה וירקות</li>
+                    <li>פסטה מחיטה מלאה עם רוטב עגבניות</li>
+                    <li>מרק ירקות עשיר</li>
+                </ul>
+            `;
+            document.getElementById('recipeResults').innerHTML = results;
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('userMessage').value;
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += `<p><strong>את/ה:</strong> ${message}</p>`;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = "תודה על השאלה. אני יועץ התזונה הווירטואלי שלך. כיצד אוכל לעזור לך היום?";
+                chatBox.innerHTML += `<p><strong>יועץ AI:</strong> ${response}</p>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+
+            document.getElementById('userMessage').value = '';
+        }
+
+        function setWaterReminder() {
+            const time = document.getElementById('waterReminder').value;
+            waterReminders.push(time);
+            document.getElementById('waterReminderStatus').textContent = `תזכורת שתייה הוגדרה ל-${time}`;
+        }
+
+        function generateWorkoutPlan() {
+            // Here you would typically generate a personalized workout plan
+            // For demonstration, we'll just display a simple plan
+            const plan = `
+                <h3>תכנית אימון שבועית</h3>
+                <p><strong>יום ראשון:</strong> 30 דקות הליכה מהירה</p>
+                <p><strong>יום שלישי:</strong> אימון כוח - 3 סטים של 10 חזרות: סקוואטים, לחיצת חזה, חתירה</p>
+                <p><strong>יום חמישי:</strong> 20 דקות ריצה קלה</p>
+                <p><strong>יום שבת:</strong> יוגה או מתיחות למשך 45 דקות</p>
+            `;
+            document.getElementById('workoutPlanResult').innerHTML = plan;
+        }
+
+        // Initialize progress chart
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני'],
+                datasets: [{
+                    label: 'משקל (ק"ג)',
+                    data: [80, 79, 78, 77, 76, 75],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
