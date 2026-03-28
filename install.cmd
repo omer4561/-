@@ -1,38 +1,51 @@
 @echo off
-setlocal
+chcp 65001 >nul
+setlocal enabledelayedexpansion
 
-echo === אפליקציית כושר ותזונה - התקנה ===
+echo ============================================
+echo   Fitness and Nutrition App - Installer
+echo ============================================
 echo.
 
-:: Check for Node.js
+:: Ask user for port
+set /p PORT="Enter port number (default: 3000): "
+if "!PORT!"=="" set PORT=3000
+
+echo.
+echo Starting server on port !PORT!...
+echo.
+
+:: Try Python first
+where python >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [OK] Python found - using Python HTTP server.
+    echo Opening http://localhost:!PORT! ...
+    start /b cmd /c "timeout /t 2 >nul && start http://localhost:!PORT!"
+    python -m http.server !PORT! --directory "%~dp0"
+    goto :done
+)
+
+:: Try Python3
+where python3 >nul 2>&1
+if %errorlevel% equ 0 (
+    echo [OK] Python3 found - using Python HTTP server.
+    start /b cmd /c "timeout /t 2 >nul && start http://localhost:!PORT!"
+    python3 -m http.server !PORT! --directory "%~dp0"
+    goto :done
+)
+
+:: Try Node.js / npx
 where node >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ERROR] Node.js is not installed.
-    echo Please install Node.js from https://nodejs.org/ and re-run this script.
-    pause
-    exit /b 1
+if %errorlevel% equ 0 (
+    echo [OK] Node.js found - using npx serve.
+    start /b cmd /c "timeout /t 3 >nul && start http://localhost:!PORT!"
+    npx --yes serve "%~dp0" -p !PORT!
+    goto :done
 )
 
-echo [OK] Node.js found.
+:: Nothing found - open file directly
+echo [WARN] No server found. Opening index.html directly in browser.
+start "" "%~dp0index.html"
 
-:: Check if index.html exists
-if not exist "%~dp0index.html" (
-    echo [ERROR] index.html not found in the current directory.
-    pause
-    exit /b 1
-)
-
-echo [OK] index.html found.
-echo.
-echo Starting local web server...
-echo The app will open at http://localhost:3000
-echo Press Ctrl+C to stop the server.
-echo.
-
-:: Open browser after a short delay
-start /b cmd /c "timeout /t 2 >nul && start http://localhost:3000"
-
-:: Serve using npx serve
-npx --yes serve "%~dp0" -p 3000 -s
-
+:done
 endlocal
