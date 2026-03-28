@@ -3,49 +3,49 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ============================================
-echo   Fitness and Nutrition App - Installer
+echo   Claude Code - Windows Installer
 echo ============================================
 echo.
 
-:: Ask user for port
-set /p PORT="Enter port number (default: 3000): "
-if "!PORT!"=="" set PORT=3000
-
-echo.
-echo Starting server on port !PORT!...
-echo.
-
-:: Try Python first
-where python >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [OK] Python found - using Python HTTP server.
-    echo Opening http://localhost:!PORT! ...
-    start /b cmd /c "timeout /t 2 >nul && start http://localhost:!PORT!"
-    python -m http.server !PORT! --directory "%~dp0"
-    goto :done
-)
-
-:: Try Python3
-where python3 >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [OK] Python3 found - using Python HTTP server.
-    start /b cmd /c "timeout /t 2 >nul && start http://localhost:!PORT!"
-    python3 -m http.server !PORT! --directory "%~dp0"
-    goto :done
-)
-
-:: Try Node.js / npx
+:: Check for Node.js
 where node >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [OK] Node.js found - using npx serve.
-    start /b cmd /c "timeout /t 3 >nul && start http://localhost:!PORT!"
-    npx --yes serve "%~dp0" -p !PORT!
-    goto :done
+if %errorlevel% neq 0 (
+    echo [ERROR] Node.js is not installed.
+    echo Please install Node.js from https://nodejs.org/ and re-run this script.
+    pause
+    exit /b 1
 )
 
-:: Nothing found - open file directly
-echo [WARN] No server found. Opening index.html directly in browser.
-start "" "%~dp0index.html"
+for /f "tokens=*" %%i in ('node -v') do set NODE_VERSION=%%i
+echo [OK] Node.js found: !NODE_VERSION!
 
-:done
+:: Check for npm
+where npm >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERROR] npm is not installed.
+    pause
+    exit /b 1
+)
+
+for /f "tokens=*" %%i in ('npm -v') do set NPM_VERSION=%%i
+echo [OK] npm found: !NPM_VERSION!
+echo.
+
+:: Install Claude Code globally
+echo Installing Claude Code...
+npm install -g @anthropic-ai/claude-code
+
+if %errorlevel% neq 0 (
+    echo [ERROR] Installation failed.
+    pause
+    exit /b 1
+)
+
+echo.
+echo ============================================
+echo   Claude Code installed successfully!
+echo   Run: claude
+echo ============================================
+echo.
+
 endlocal
