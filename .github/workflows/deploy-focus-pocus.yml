@@ -1,0 +1,50 @@
+name: Deploy Focus Pocus site
+
+on:
+  push:
+    branches:
+      - focus-pocus-site
+    paths:
+      - "focus-pocus-site/**"
+      - ".github/workflows/deploy-focus-pocus.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate static site
+        run: |
+          test -s focus-pocus-site/index.html
+          test -s focus-pocus-site/styles.css
+          test -s focus-pocus-site/script.js
+          ! grep -Eiq '<script[^>]+src=["\x27]https?://' focus-pocus-site/index.html
+          ! grep -Eiq 'on[a-z]+[[:space:]]*=' focus-pocus-site/index.html
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: focus-pocus-site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
