@@ -30,7 +30,7 @@ jobs:
           test -s focus-pocus-site/styles.css
           test -s focus-pocus-site/script.js
           ! grep -Eiq '<script[^>]+src=["\x27]https?://' focus-pocus-site/index.html
-          ! grep -Eiq 'on[a-z]+[[:space:]]*=' focus-pocus-site/index.html
+          ! grep -Eiq '(^|[[:space:]])on[a-z]+[[:space:]]*=' focus-pocus-site/index.html
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site artifact
